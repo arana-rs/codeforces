@@ -1,6 +1,8 @@
 build problem:
-    mkdir -p bin
-    g++ -std=c++20 -o bin/{{ problem }} {{ problem }}/solution.cpp -Wall -O2
+    @mkdir -p bin
+    @if [ "{{ problem }}/solution.cpp" -nt "bin/{{ problem }}" ]; then \
+        g++ -std=c++20 -o bin/{{ problem }} {{ problem }}/solution.cpp -Wall -O2; \
+    fi
 
 # just <problem> → compila y corre con in.txt
 run problem: (build problem)
