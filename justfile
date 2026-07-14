@@ -1,29 +1,28 @@
+# compila <problem>
 build problem:
     @mkdir -p bin
-    @if [ "{{ problem }}/solution.cpp" -nt "bin/{{ problem }}" ]; then \
-        g++ -std=c++20 -o bin/{{ problem }} {{ problem }}/solution.cpp -Wall -O2; \
+    @if [ "cpp/{{ problem }}.cpp" -nt "bin/{{ problem }}" ]; then \
+        g++ -std=c++20 -I. -o bin/{{ problem }} cpp/{{ problem }}.cpp -Wall -O2; \
     fi
 
-# just <problem> → compila y corre con in.txt
+# just run <problem> → compila y corre con el input
 run problem: (build problem)
-    ./bin/{{ problem }} < {{ problem }}/in.txt
+    ./bin/{{ problem }} < inputs/{{ problem }}.in
 
-# just check <problem> → compara output con out.txt
+# just check <problem> → compara output con el .out esperado
 check problem: (build problem)
-    ./bin/{{ problem }} < {{ problem }}/in.txt | diff - {{ problem }}/out.txt && echo "✓ AC" || echo "✗ WA"
+    ./bin/{{ problem }} < inputs/{{ problem }}.in | diff - inputs/{{ problem }}.out && echo "✓ AC" || echo "✗ WA"
 
 # just test-all → corre check en todos los problemas
 test-all:
-    @for d in */; do \
-        name=$(basename "$d"); \
-        if [ -f "$d/solution.cpp" ]; then \
-            printf "%-8s " "$name"; \
-            just check "$name"; \
-        fi; \
+    @for f in cpp/solutions/*.cpp; do \
+        name=$(basename "$f" .cpp); \
+        printf "%-8s " "$name"; \
+        just check "$name"; \
     done
 
-# just new <problem> → crea carpeta con archivos vacíos
+# just new <problem> → crea archivos vacíos para un nuevo problema
 new problem:
-    mkdir -p {{ problem }}
-    touch {{ problem }}/in.txt {{ problem }}/out.txt
-    [ -f {{ problem }}/solution.cpp ] || cp template.cpp {{ problem }}/solution.cpp
+    mkdir -p cpp/solutions inputs
+    touch inputs/{{ problem }}.in inputs/{{ problem }}.out
+    [ -f cpp/{{ problem }}.cpp ] || cp template.cpp cpp/{{ problem }}.cpp
