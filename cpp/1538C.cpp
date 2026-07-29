@@ -1,10 +1,8 @@
-#include <algorithm>
+#include "../utils.h"
 #include <bits/stdc++.h>
-#include <iostream>
-#include <vector>
 
 void solve() {
-    int n, l, r;
+    long long n, l, r;
     std::cin >> n >> l >> r;
 
     std::vector<int> a(n);
@@ -13,18 +11,15 @@ void solve() {
     }
     std::sort(a.begin(), a.end());
 
-    // haciendo a[i] fijo en vez de variable
-    // l - a[i] <= a[j] <= r - a[i]
+    // l <= a_i + a_j <= r
+    // l - a_j <= a_i <= r - a_j
+
     long long count = 0;
-    for (int i = 0; i < n; i += 1) {
-        int left = l - a[i];
-        int right = r - a[i];
+    for (int j = 0; j < n; j += 1) {
+        auto lower = std::lower_bound(a.begin() + j + 1, a.end(), l - a[j]);
+        auto upper = std::upper_bound(a.begin() + j + 1, a.end(), r - a[j]);
 
-        // + 1 para no encontrar el mismo elemento al buscar
-        auto floor = std::lower_bound(a.begin() + i + 1, a.end(), left);
-        auto roof = std::upper_bound(a.begin() + i + 1, a.end(), right);
-
-        count += (roof - floor);
+        count += (upper - lower);
     }
 
     std::cout << count << '\n';

@@ -2,8 +2,13 @@
 #include <bits/stdc++.h>
 
 void solve() {
-    int n;
-    std::cin >> n;
+    long long n, m, a;
+    std::cin >> n >> m >> a;
+
+    long long temp = n / a + ((n % a == 0) ? 0 : 1);
+    temp *= m / a + ((m % a == 0) ? 0 : 1);
+    
+    std::cout << temp << '\n';
 }
 
 int main() {

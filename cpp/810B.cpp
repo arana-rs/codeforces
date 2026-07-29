@@ -1,36 +1,35 @@
+#include "../utils.h"
 #include <bits/stdc++.h>
 
-int ganancia(int k, int l) {
-    if (k >= l) {
-        return 0;
-    }
+int ganancia(const std::pair<int, int> d) {
+    int k = d.first;
+    int l = d.second;
     return std::min(k, l - k);
 }
 
 void solve() {
     int n, f;
     std::cin >> n >> f;
-
-    std::vector<std::pair<int, int>> days(n);
+    std::vector<std::pair<int, int>> d(n);
     for (int i = 0; i < n; i += 1) {
-        std::cin >> days[i].first >> days[i].second;
+        std::cin >> d[i].first >> d[i].second;
     }
 
-    // calcular ganancia para sortearlo a favor de f
-    auto cmp = [](const std::pair<int, int> &a, const std::pair<int, int> &b) {
-        return ganancia(a.first, a.second) > ganancia(b.first, b.second);
-    };
+    std::sort(d.begin(), d.end(),
+              [](const std::pair<int, int> &a, const std::pair<int, int> &b) {
+                  return ganancia(a) > ganancia(b);
+              });
 
-    std::sort(days.begin(), days.end(), cmp);
-
+    int i = 0;
     long long acc = 0;
-    for (std::pair<int, int> &day : days) {
-        if (f > 0) {
-            day.first *= 2;
-            f -= 1;
-        }
-        acc += std::min(day.first, day.second);
+    for (; i < f; i += 1) {
+        acc += std::min(d[i].first * 2, d[i].second);
     }
+
+    for (; i < n; i += 1) {
+        acc += std::min(d[i].first, d[i].second);
+    }
+
     std::cout << acc << '\n';
 }
 
